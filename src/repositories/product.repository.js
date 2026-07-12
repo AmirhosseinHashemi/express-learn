@@ -9,4 +9,8 @@ export const productRepository = {
   getAllProducts() {
     return products;
   },
+
+  getProductById(id) {
+    return products.find((p => p.id === Number(id)));
+  },
 };
