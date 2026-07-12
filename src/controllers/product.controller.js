@@ -1,13 +1,19 @@
 import { productService } from "../services/product.service.js";
+import { sendSuccessResponse } from "../utils/response.js";
 
 export const productController = {
   getAllProduct(req, res) {
     const allProduct = productService.getAllProduct();
-    res.json(allProduct);
+    sendSuccessResponse(res, { message: "All product", data: allProduct });
   },
 
   getProductById(req, res, next) {
-    const product = productService.getProductById(req.params.id);
-    return res.json(product);
+    const productId = req.params.id;
+    const product = productService.getProductById(productId);
+
+    sendSuccessResponse(res, {
+      message: `product with id ${productId}`,
+      data: product,
+    });
   },
 };

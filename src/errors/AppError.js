@@ -8,7 +8,7 @@ export default class AppError extends Error {
     super(message);
 
     this.name = this.constructor.name;
-
+    
     this.statusCode = statusCode;
     this.errorCode = errorCode;
     this.details = details;
