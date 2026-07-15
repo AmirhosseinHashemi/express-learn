@@ -16,4 +16,9 @@ export const productController = {
       data: product,
     });
   },
+
+  creatNewProduct(req, res) {
+    const payload = req.body;
+    return productService.createNewProduct(payload);
+  },
 };

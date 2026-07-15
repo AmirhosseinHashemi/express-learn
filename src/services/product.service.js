@@ -13,4 +13,8 @@ export const productService = {
 
     return product;
   },
+
+  createNewProduct(payload) {
+    return productRepository.createNewProduct(payload);
+  },
 };

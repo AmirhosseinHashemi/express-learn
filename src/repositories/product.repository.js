@@ -11,6 +11,11 @@ export const productRepository = {
   },
 
   getProductById(id) {
-    return products.find((p => p.id === Number(id)));
+    return products.find((p) => p.id === Number(id));
+  },
+
+  createNewProduct(payload) {
+    products.push(payload);
+    return payload;
   },
 };
