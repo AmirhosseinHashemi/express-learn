@@ -1,4 +1,4 @@
-import AppError from "./AppError.js";
+import AppError from "../../../errors/AppError.js";
 
 export default class ProductNotFoundError extends AppError {
   constructor(id) {

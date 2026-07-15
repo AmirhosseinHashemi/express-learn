@@ -1,8 +1,8 @@
 import express from "express";
-import { productController } from "../controllers/product.controller.js";
-import asyncHandler from "../utils/asyncHandler.js";
-import { createProductSchema } from "../validators/schemas/product.schema.js";
-import validate from "../validators/validate.js";
+import asyncHandler from "../../utils/asyncHandler.js";
+import validate from "../../validators/validate.js";
+import { productController } from "./product.controller.js";
+import { createProductSchema } from "./product.schema.js";
 
 const productRouter = express.Router();
 

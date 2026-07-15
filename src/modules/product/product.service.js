@@ -1,5 +1,5 @@
-import ProductNotFoundError from "../errors/ProductNotFoundError.js";
-import { productRepository } from "../repositories/product.repository.js";
+import ProductNotFoundError from "./errors/ProductNotFoundError.js";
+import { productRepository } from "./product.repository.js";
 
 export const productService = {
   getAllProduct() {

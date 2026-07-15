@@ -1,5 +1,5 @@
-import { productService } from "../services/product.service.js";
-import { sendSuccessResponse } from "../utils/response.js";
+import { productService } from "./product.service.js";
+import { sendSuccessResponse } from "../../utils/response.js";
 
 export const productController = {
   getAllProduct(req, res) {
