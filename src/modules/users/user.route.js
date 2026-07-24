@@ -5,5 +5,6 @@ import { userController } from "./user.controller.js";
 const userRouter = express.Router();
 
 userRouter.get("/", asyncHandler(userController.getAllUser));
+userRouter.get("/:id", asyncHandler(userController.getSingleUser));
 
 export default userRouter;
