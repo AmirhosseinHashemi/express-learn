@@ -3,13 +3,17 @@ import { userRepository } from "./users.repository.js";
 
 export const userService = {
   async getAllUser() {
-    return await userRepository.getAllUsers();
+    return userRepository.findAll();
   },
 
-  async getSingleUser(id) {
-    const user = await userRepository.getSingleUser(id);
+  async getUserById(id) {
+    const user = await userRepository.findById(id);
     if (!user) throw new UserNotFoundError(id);
 
     return user;
+  },
+
+  async createUser(userData) {
+    return userRepository.create(userData);
   },
 };
