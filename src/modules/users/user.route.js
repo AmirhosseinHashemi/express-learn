@@ -14,5 +14,6 @@ userRouter.post(
   asyncHandler(userController.createUser),
 );
 userRouter.patch("/:id", asyncHandler(userController.updateUser));
+userRouter.delete("/:id", asyncHandler(userController.deleteUser));
 
 export default userRouter;

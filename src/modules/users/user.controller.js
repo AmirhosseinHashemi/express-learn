@@ -26,11 +26,19 @@ export const userController = {
     const userId = req.params.id;
     const userData = req.body;
 
-
     const updatedUser = await userService.updateUser(userId, userData);
     sendSuccessResponse(res, {
       message: `user with id ${userId} updated successfully`,
       data: updatedUser,
+    });
+  },
+
+  async deleteUser(req, res) {
+    const userId = req.params.id;
+    await userService.deleteUser(userId);
+
+    sendSuccessResponse(res, {
+      message: `user with ${userId} deleted successfully.`,
     });
   },
 };

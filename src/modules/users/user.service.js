@@ -24,4 +24,10 @@ export const userService = {
 
     return updatedUser;
   },
+
+  async deleteUser(id) {
+    const result = await userRepository.delete(id);
+
+    if (result === 0) throw new UserNotFoundError(id);
+  },
 };

@@ -44,4 +44,11 @@ export const userRepository = {
 
     return result.rows[0];
   },
+
+  async delete(id) {
+    const result = await query("DELETE FROM users WHERE id = $1", [id]);
+
+    // if (user exist it returns 1 else 0)
+    return result.rowCount;
+  },
 };
