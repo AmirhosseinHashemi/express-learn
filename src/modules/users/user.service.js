@@ -16,4 +16,12 @@ export const userService = {
   async createUser(userData) {
     return userRepository.create(userData);
   },
+
+  async updateUser(id, userData) {
+    const updatedUser = await userRepository.updateUser(id, userData);
+
+    if (!updatedUser) throw new UserNotFoundError(id);
+
+    return updatedUser;
+  },
 };

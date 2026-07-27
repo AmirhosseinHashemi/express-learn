@@ -4,3 +4,13 @@ export const createUserSchema = {
     type: "string",
   },
 };
+
+export const patchUserSchema = {
+  name: {
+    type: "string",
+  },
+
+  email: {
+    type: "string",
+  },
+};

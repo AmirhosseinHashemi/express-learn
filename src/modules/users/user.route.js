@@ -13,5 +13,6 @@ userRouter.post(
   validate(createUserSchema),
   asyncHandler(userController.createUser),
 );
+userRouter.patch("/:id", asyncHandler(userController.updateUser));
 
 export default userRouter;

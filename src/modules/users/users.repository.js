@@ -20,4 +20,28 @@ export const userRepository = {
 
     return res.rows[0];
   },
+
+  async updateUser(id, { name, email }) {
+    const fields = [];
+    const values = [];
+
+    if (name !== undefined && name !== null) {
+      values.push(name);
+      fields.push(`name = $${values.length}`);
+    }
+
+    if (email !== undefined && email !== null) {
+      values.push(email);
+      fields.push(`email = $${values.length}`);
+    }
+
+    values.push(id);
+
+    const result = await query(
+      `UPDATE users SET ${fields.join(", ")} WHERE id = $${values.length} RETURNING *`,
+      values,
+    );
+
+    return result.rows[0];
+  },
 };
