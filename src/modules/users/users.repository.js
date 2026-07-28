@@ -1,9 +1,10 @@
 import db from "../../database/database.js";
+import prisma from "../../database/prisma.js";
 import query from "../../database/query.js";
 
 export const userRepository = {
   async findAll() {
-    const res = await db.query("SELECT * FROM users");
+    const res = await prisma.user.findMany();
     return res.rows;
   },
 
