@@ -2,6 +2,7 @@ import pg from "pg";
 import config from "../config/index.js";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma/client.ts";
+import mapPrismaError from "./prismaErrorMapper.js";
 
 const { Pool } = pg;
 
@@ -11,8 +12,14 @@ const pool = new Pool({
 
 const adapter = new PrismaPg(pool);
 
-const prisma = new PrismaClient({
+export const prisma = new PrismaClient({
   adapter,
 });
 
-export default prisma;
+export const execute = async function (query) {
+  try {
+    return await query();
+  } catch (error) {
+    throw mapPrismaError(error);
+  }
+};
