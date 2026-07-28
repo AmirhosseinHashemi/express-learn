@@ -3,7 +3,8 @@ import { userService } from "./user.service.js";
 
 export const userController = {
   async getAllUser(req, res) {
-    const users = await userService.getAllUser();
+    const { search } = req.query;
+    const users = await userService.getAllUser({ search });
     sendSuccessResponse(res, { message: "All users", data: users });
   },
 
@@ -16,7 +17,7 @@ export const userController = {
   async createUser(req, res) {
     const userData = req.body;
     const user = await userService.createUser(userData);
-    
+
     sendSuccessResponse(res, {
       message: "new user created successfuly.",
       data: user,

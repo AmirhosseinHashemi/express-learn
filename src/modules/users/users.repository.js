@@ -1,10 +1,27 @@
 import { execute, prisma } from "../../database/prisma.js";
-import mapPrismaError from "../../database/prismaErrorMapper.js";
-import query from "../../database/query.js";
 
 export const userRepository = {
-  async findAll() {
-    return await execute(() => prisma.user.findMany());
+  async findAll({ search }) {
+    const fields = ["name", "email"];
+    const where = {};
+
+    if (search?.trim()) {
+      where.OR = fields.map((field) => ({
+        [field]: {
+          contains: search,
+          mode: "insensitive",
+        },
+      }));
+    }
+
+    return execute(() =>
+      prisma.user.findMany({
+        where,
+        orderBy: {
+        
+        }
+      }),
+    );
   },
 
   async findById(id) {

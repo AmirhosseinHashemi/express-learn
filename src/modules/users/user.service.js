@@ -2,8 +2,8 @@ import UserNotFoundError from "./errors/UserNotFoundError.js";
 import { userRepository } from "./users.repository.js";
 
 export const userService = {
-  async getAllUser() {
-    return userRepository.findAll();
+  async getAllUser(search) {
+    return userRepository.findAll(search);
   },
 
   async getUserById(id) {
