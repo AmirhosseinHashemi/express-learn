@@ -16,6 +16,7 @@ export const userController = {
   async createUser(req, res) {
     const userData = req.body;
     const user = await userService.createUser(userData);
+    
     sendSuccessResponse(res, {
       message: "new user created successfuly.",
       data: user,

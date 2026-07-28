@@ -1,55 +1,43 @@
-import db from "../../database/database.js";
-import prisma from "../../database/prisma.js";
+import { execute, prisma } from "../../database/prisma.js";
+import mapPrismaError from "../../database/prismaErrorMapper.js";
 import query from "../../database/query.js";
 
 export const userRepository = {
   async findAll() {
-    const res = await prisma.user.findMany();
-    return res.rows;
+    return await execute(() => prisma.user.findMany());
   },
 
   async findById(id) {
-    const res = await query("SELECT * FROM users WHERE id = $1", [id]);
-    return res.rows[0];
+    return await execute(() =>
+      prisma.user.findUnique({ where: { id: Number(id) } }),
+    );
   },
 
   async create({ name, email }) {
-    const res = await query(
-      "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *",
-      [name, email],
+    return await execute(() =>
+      prisma.user.create({
+        data: {
+          name,
+          email,
+        },
+      }),
     );
-
-    return res.rows[0];
   },
 
   async updateUser(id, { name, email }) {
-    const fields = [];
-    const values = [];
+    const data = { name: undefined, email: undefined };
 
-    if (name !== undefined && name !== null) {
-      values.push(name);
-      fields.push(`name = $${values.length}`);
-    }
+    if (name !== undefined && name !== null) data.name = name;
+    if (email !== undefined && email !== null) data.email = email;
 
-    if (email !== undefined && email !== null) {
-      values.push(email);
-      fields.push(`email = $${values.length}`);
-    }
-
-    values.push(id);
-
-    const result = await query(
-      `UPDATE users SET ${fields.join(", ")} WHERE id = $${values.length} RETURNING *`,
-      values,
+    return await execute(() =>
+      prisma.user.update({ where: { id: Number(id) }, data }),
     );
-
-    return result.rows[0];
   },
 
   async delete(id) {
-    const result = await query("DELETE FROM users WHERE id = $1", [id]);
-
-    // if (user exist it returns 1 else 0)
-    return result.rowCount;
+    return await execute(() =>
+      prisma.user.delete({ where: { id: Number(id) } }),
+    );
   },
 };
