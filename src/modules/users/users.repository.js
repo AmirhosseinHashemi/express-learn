@@ -1,10 +1,9 @@
 import { execute, prisma } from "../../database/prisma.js";
 
-export const userRepository = {
-  async findAll({ search }, sort, page, limit) {
-    const fields = ["name", "email"];
-    const SORT_FIELDS = ["id", "name", "email"];
+const USER_COLUMNS = ["id", "name", "email"];
 
+export const userRepository = {
+  async findAll({ search, sort, page, limit }) {
     const where = {};
     let orderBy;
 
@@ -13,7 +12,7 @@ export const userRepository = {
     const skip = (pageNumber - 1) * pageSize;
 
     if (search?.trim()) {
-      where.OR = fields.map((field) => ({
+      where.OR = USER_COLUMNS.map((field) => ({
         [field]: {
           contains: search,
           mode: "insensitive",
@@ -25,7 +24,7 @@ export const userRepository = {
       const direction = sort?.startsWith("-") ? "desc" : "asc";
       const field = sort.replace("-", "");
 
-      if (SORT_FIELDS.includes(field)) {
+      if (USER_COLUMNS.includes(field)) {
         orderBy = {
           [field]: direction,
         };
