@@ -3,8 +3,8 @@ import { userService } from "./user.service.js";
 
 export const userController = {
   async getAllUser(req, res) {
-    const { search } = req.query;
-    const users = await userService.getAllUser({ search });
+    const { search, sort } = req.query;
+    const users = await userService.getAllUser({ search }, sort);
     sendSuccessResponse(res, { message: "All users", data: users });
   },
 
