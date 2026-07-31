@@ -3,9 +3,14 @@ import { userService } from "./user.service.js";
 
 export const userController = {
   async getAllUser(req, res) {
-    const { search, sort, page, limit } = req.query;
+    const { search, orderBy, page, limit } = req.query;
 
-    const users = await userService.getAllUser({ search, sort, page, limit });
+    const users = await userService.getAllUser({
+      search,
+      orderBy,
+      page,
+      limit,
+    });
     sendSuccessResponse(res, { message: "All users", data: users });
   },
 

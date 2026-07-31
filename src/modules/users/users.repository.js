@@ -1,34 +1,19 @@
 import { execute, prisma } from "../../database/prisma.js";
-
-const USER_COLUMNS = ["id", "name", "email"];
+import { USER_SEARCH_FIELDS, USER_SORT_FIELDS } from "./user.constants.js";
 
 export const userRepository = {
-  async findAll({ search, sort, page, limit }) {
+  async findAll({ search, orderBy, page, limit }) {
     const where = {};
-    let orderBy;
+    const skip = (page - 1) * limit;
 
-    const pageNumber = Number(page) || 1;
-    const pageSize = Number(limit) || 10;
-    const skip = (pageNumber - 1) * pageSize;
-
-    if (search?.trim()) {
-      where.OR = USER_COLUMNS.map((field) => ({
+    
+    if (search) {
+      where.OR = USER_SEARCH_FIELDS.map((field) => ({
         [field]: {
           contains: search,
           mode: "insensitive",
         },
       }));
-    }
-
-    if (sort) {
-      const direction = sort?.startsWith("-") ? "desc" : "asc";
-      const field = sort.replace("-", "");
-
-      if (USER_COLUMNS.includes(field)) {
-        orderBy = {
-          [field]: direction,
-        };
-      }
     }
 
     const [items, count] = await execute(() =>
@@ -37,7 +22,7 @@ export const userRepository = {
           where,
           orderBy,
           skip,
-          take: pageSize,
+          take: limit,
         }),
 
         prisma.user.count({
@@ -53,9 +38,7 @@ export const userRepository = {
   },
 
   async findById(id) {
-    return await execute(() =>
-      prisma.user.findUnique({ where: { id: Number(id) } }),
-    );
+    return execute(() => prisma.user.findUnique({ where: { id: id } }));
   },
 
   async create({ name, email }) {

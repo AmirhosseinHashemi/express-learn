@@ -20,6 +20,8 @@ export const execute = async function (query) {
   try {
     return await query();
   } catch (error) {
+    console.log(error);
+    
     throw mapPrismaError(error);
   }
 };

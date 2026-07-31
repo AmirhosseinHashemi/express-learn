@@ -1,20 +1,36 @@
 import ValidationError from "../errors/ValidationError.js";
+import mapZodError from "./zodErrorMapper.js";
 
-export default function validate({ bodySchema }) {
+function assignValidatedData(req, key, value) {
+  if (key === "query") {
+    Object.defineProperty(req, "query", {
+      value,
+      configurable: true,
+      enumerable: true,
+    });
+
+    return;
+  }
+
+  req[key] = value;
+}
+
+export default function validate({ body, query, params }) {
   return (req, res, next) => {
-    const body = req.body;
-    const result = bodySchema.safeParse(body);
+    const schemas = { body, query, params };
 
-    if (!result.success) {
-      const details = result.error.issues.map((issue) => ({
-        field: issue.path.join("."),
-        message: issue.message,
-      }));
+    for (const [key, schema] of Object.entries(schemas)) {
+      if (!schema) continue;
 
-      next(new ValidationError(details));
+      const result = schema.safeParse(req[key]);
+
+      if (!result.success) {
+        return next(new ValidationError(mapZodError(result.error)));
+      }
+
+      assignValidatedData(req, key, result.data);
     }
 
-    req.body = result.data;
     next();
   };
 }
