@@ -6,7 +6,6 @@ export const userRepository = {
     const where = {};
     const skip = (page - 1) * limit;
 
-    
     if (search) {
       where.OR = USER_SEARCH_FIELDS.map((field) => ({
         [field]: {
@@ -41,12 +40,17 @@ export const userRepository = {
     return execute(() => prisma.user.findUnique({ where: { id: id } }));
   },
 
-  async create({ name, email }) {
-    return await execute(() =>
+  async findByEmail(email) {
+    return execute(() => prisma.user.findUnique({ where: { email } }));
+  },
+
+  async create({ name, email, password }) {
+    return execute(() =>
       prisma.user.create({
         data: {
           name,
           email,
+          password,
         },
       }),
     );
