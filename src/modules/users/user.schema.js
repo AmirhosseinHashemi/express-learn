@@ -31,8 +31,9 @@ export const getUsersQuerySchema = z.object({
 });
 
 export const createUserSchema = z.object({
-  name: z.string(),
-  email: z.string(),
+  name: z.string().trim(),
+  email: z.string().trim().email(),
+  password: z.string().min(4),
 });
 
 export const getUserParamsSchema = z.object({
