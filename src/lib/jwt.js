@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import config from "../config/index.js";
+import UnauthorizedError from "../errors/UnauthorizedError.js";
 
 export function generateAccessToken(payload) {
   return jwt.sign(payload, config.jwtSecret, {
@@ -7,6 +8,10 @@ export function generateAccessToken(payload) {
   });
 }
 
-export function verfyAccessToken(token) {
-  return jwt.verify(token, config.jwtSecret);
+export function verifyAccessToken(token) {
+  try {
+    return jwt.verify(token, config.jwtSecret);
+  } catch (error) {
+    throw new UnauthorizedError();
+  }
 }
