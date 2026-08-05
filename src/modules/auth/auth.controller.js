@@ -14,4 +14,17 @@ export const authController = {
       data: newUser,
     });
   },
+
+  async loginUser(req, res) {
+    const user = await authService.loginUser(req.body);
+    const logedInUser = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    };
+    sendSuccessResponse(res, {
+      message: "Successfully logedin",
+      data: logedInUser,
+    });
+  },
 };
