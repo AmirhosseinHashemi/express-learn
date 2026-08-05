@@ -3,6 +3,7 @@ import { userRepository } from "../users/users.repository.js";
 import { BCRYPT_SALT_ROUNDS } from "../../config/constant.js";
 import AppError from "../../errors/AppError.js";
 import InvalidCredentialError from "./errors/InvalidCredentialError.js";
+import { generateAccessToken } from "../../lib/jwt.js";
 
 export const authService = {
   async registerUser(userData) {
@@ -32,6 +33,7 @@ export const authService = {
 
     if (!isPasswordValid) throw new InvalidCredentialError();
 
-    return user;
+    const accessToken = generateAccessToken({ userId: user.id });
+    return { accessToken };
   },
 };

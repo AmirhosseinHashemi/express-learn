@@ -16,15 +16,11 @@ export const authController = {
   },
 
   async loginUser(req, res) {
-    const user = await authService.loginUser(req.body);
-    const logedInUser = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-    };
+    const result = await authService.loginUser(req.body);
+    
     sendSuccessResponse(res, {
       message: "Successfully logedin",
-      data: logedInUser,
+      data: result,
     });
   },
 };
