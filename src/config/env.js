@@ -7,4 +7,6 @@ export default {
   dbUser: String(process.env.DB_USER),
   dbPassword: String(process.env.DB_PASSWORD),
   dbName: String(process.env.DB_NAME),
+  jwtSecret: String(process.env.JWT_SECRET),
+  jwtExpiresIn: String(process.env.JWT_EXPIRES_IN),
 };
