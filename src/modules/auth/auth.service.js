@@ -1,9 +1,15 @@
 import bcrypt from "bcrypt";
-import { userRepository } from "../users/users.repository.js";
 import { BCRYPT_SALT_ROUNDS } from "../../config/constant.js";
 import AppError from "../../errors/AppError.js";
-import InvalidCredentialError from "./errors/InvalidCredentialError.js";
 import { generateAccessToken } from "../../lib/jwt.js";
+import {
+  generateRefreshToken,
+  getRefreshTokenExpiration,
+  hashRefreshToken,
+} from "../../lib/refreshToken.js";
+import { userRepository } from "../users/users.repository.js";
+import { authRepository } from "./auth.repository.js";
+import InvalidCredentialError from "./errors/InvalidCredentialError.js";
 
 export const authService = {
   async registerUser(userData) {
@@ -34,6 +40,17 @@ export const authService = {
     if (!isPasswordValid) throw new InvalidCredentialError();
 
     const accessToken = generateAccessToken({ userId: user.id });
-    return { accessToken };
+    const refreshToken = generateRefreshToken();
+    const refreshTokenHash = await hashRefreshToken(refreshToken);
+    const expiresAt = getRefreshTokenExpiration();
+
+    const toCreateRefreshToken = {
+      tokenHash: refreshTokenHash,
+      userId: user.id,
+      expiresAt,
+    };
+    await authRepository.createRefreshToken(toCreateRefreshToken);
+
+    return { accessToken, refreshToken };
   },
 };
