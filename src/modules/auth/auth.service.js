@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { BCRYPT_SALT_ROUNDS } from "../../config/constant.js";
 import AppError from "../../errors/AppError.js";
+import UnauthorizedError from "../../errors/UnauthorizedError.js";
 import { generateAccessToken } from "../../lib/jwt.js";
 import {
   generateRefreshToken,
@@ -53,5 +54,25 @@ export const authService = {
     await authRepository.createRefreshToken(toCreateRefreshToken);
 
     return { accessToken, refreshToken };
+  },
+
+  async refreshToken(token) {
+    if (!token) throw new UnauthorizedError();
+
+    const [tokenId] = token.split(".");
+    const storedToken = await authRepository.findRefreshTokenByTokenId(tokenId);
+    if (!storedToken) throw new UnauthorizedError();
+
+    const isValid = await bcrypt.compare(token, storedToken.tokenHash);
+    if (!isValid) throw new UnauthorizedError();
+
+    if (storedToken.expiresAt < new Date()) throw new UnauthorizedError();
+    if (storedToken.revokedAt) throw new UnauthorizedError();
+
+    const accessToken = generateAccessToken({
+      userId: storedToken.userId,
+    });
+
+    return { accessToken };
   },
 };

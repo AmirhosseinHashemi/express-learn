@@ -31,4 +31,13 @@ export const authController = {
       data: result,
     });
   },
+
+  async refreshToken(req, res) {
+    const result = await authService.refreshToken(req.body?.refreshToken);
+
+    sendSuccessResponse(res, {
+      message: "New token generated successfully",
+      data: result,
+    });
+  },
 };
