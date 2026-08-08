@@ -67,12 +67,30 @@ export const authService = {
     if (!isValid) throw new UnauthorizedError();
 
     if (storedToken.expiresAt < new Date()) throw new UnauthorizedError();
-    if (storedToken.revokedAt) throw new UnauthorizedError();
+    if (storedToken.revokedAt) {
+      await authRepository.revokeAllUserRefreshTokens(storedToken.userId);
+      throw new UnauthorizedError();
+    }
+
+    const { refreshToken, tokenId: newTokenId } = generateRefreshToken();
+    const refreshTokenHash = await hashRefreshToken(refreshToken);
+    const expiresAt = getRefreshTokenExpiration();
+
+    const refreshTokenToCreate = {
+      tokenId: newTokenId,
+      tokenHash: refreshTokenHash,
+      userId: storedToken.userId,
+      expiresAt,
+    };
+    await authRepository.rotateRefreshToken(
+      storedToken.id,
+      refreshTokenToCreate,
+    );
 
     const accessToken = generateAccessToken({
       userId: storedToken.userId,
     });
 
-    return { accessToken };
+    return { accessToken, refreshToken };
   },
 };
