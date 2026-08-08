@@ -4,7 +4,15 @@ import config from "../config/index.js";
 import { BCRYPT_SALT_ROUNDS } from "../config/constant.js";
 
 export function generateRefreshToken() {
-  return crypto.randomBytes(64).toString("hex");
+  const tokenId = crypto.randomBytes(16).toString("hex");
+  const secret = crypto.randomBytes(64).toString("hex");
+
+  const refreshToken = `${tokenId}.${secret}`;
+
+  return {
+    tokenId,
+    refreshToken,
+  };
 }
 
 export async function hashRefreshToken(token) {

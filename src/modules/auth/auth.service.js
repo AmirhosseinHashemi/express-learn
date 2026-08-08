@@ -40,11 +40,12 @@ export const authService = {
     if (!isPasswordValid) throw new InvalidCredentialError();
 
     const accessToken = generateAccessToken({ userId: user.id });
-    const refreshToken = generateRefreshToken();
+    const { refreshToken, tokenId } = generateRefreshToken();
     const refreshTokenHash = await hashRefreshToken(refreshToken);
     const expiresAt = getRefreshTokenExpiration();
 
     const toCreateRefreshToken = {
+      tokenId,
       tokenHash: refreshTokenHash,
       userId: user.id,
       expiresAt,
