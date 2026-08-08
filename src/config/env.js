@@ -9,4 +9,5 @@ export default {
   dbName: String(process.env.DB_NAME),
   jwtSecret: String(process.env.JWT_SECRET),
   jwtExpiresIn: String(process.env.JWT_EXPIRES_IN),
+  refreshTokenExpiresInDays: String(process.env.REFRESH_TOKEN_EXPIRES_IN_DAYS),
 };
