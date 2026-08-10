@@ -112,7 +112,7 @@ export const authService = {
   },
 
   async logoutAll(userId) {
-    if (!userId) throw UnauthorizedError()
+    if (!userId) throw new UnauthorizedError()
     await authRepository.revokeAllUserRefreshTokens(userId);
   },
 };

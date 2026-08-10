@@ -29,7 +29,7 @@ export const authRepository = {
     return execute(() =>
       prisma.refreshToken.updateMany({
         where: {
-          userId: userId,
+          userId,
           revokedAt: null,
         },
         data: { revokedAt: new Date() },
