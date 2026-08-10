@@ -40,4 +40,10 @@ export const authController = {
       data: result,
     });
   },
+
+  async logout(req, res) {
+    await authService.logout(req.body?.refreshToken);
+
+    sendSuccessResponse(res, { message: "logout successfully" });
+  },
 };

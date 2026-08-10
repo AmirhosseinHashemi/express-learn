@@ -93,4 +93,21 @@ export const authService = {
 
     return { accessToken, refreshToken };
   },
+
+  async logout(token) {
+    if (!token) throw new UnauthorizedError();
+
+    const [tokenId] = token.split(".");
+    if (!tokenId) throw new UnauthorizedError();
+
+    const tokenRaw = await authRepository.findRefreshTokenByTokenId(tokenId);
+    if (!tokenRaw) throw new UnauthorizedError();
+
+    const isValid = await bcrypt.compare(token, tokenRaw.tokenHash);
+    if (!isValid) throw new UnauthorizedError();
+
+    if (tokenRaw.revokedAt) throw new UnauthorizedError();
+
+    await authRepository.revokeRefreshToken(tokenRaw.id);
+  },
 };

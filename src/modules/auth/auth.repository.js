@@ -36,4 +36,15 @@ export const authRepository = {
       }),
     );
   },
+
+  async revokeRefreshToken(id) {
+    return execute(() =>
+      prisma.refreshToken.update({
+        where: {
+          id,
+        },
+        data: { revokedAt: new Date() },
+      }),
+    );
+  },
 };
