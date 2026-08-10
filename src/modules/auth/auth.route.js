@@ -33,4 +33,6 @@ authRouter.post(
 
 authRouter.post("/logout", asyncHandler(authController.logout));
 
+authRouter.post("/logout-all", authMiddleware, asyncHandler(authController.logoutAll));
+
 export default authRouter;

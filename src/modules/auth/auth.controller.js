@@ -46,4 +46,12 @@ export const authController = {
 
     sendSuccessResponse(res, { message: "logout successfully" });
   },
+
+  async logoutAll(req, res) {
+    await authService.logoutAll(req?.user?.id);
+
+    sendSuccessResponse(res, {
+      message: "Logged out from all sessions successfully",
+    });
+  },
 };

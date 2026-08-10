@@ -110,4 +110,9 @@ export const authService = {
 
     await authRepository.revokeRefreshToken(tokenRaw.id);
   },
+
+  async logoutAll(userId) {
+    if (!userId) throw UnauthorizedError()
+    await authRepository.revokeAllUserRefreshTokens(userId);
+  },
 };
