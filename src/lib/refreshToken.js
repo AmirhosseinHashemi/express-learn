@@ -1,7 +1,9 @@
-import crypto from "node:crypto";
 import bcrypt from "bcrypt";
-import config from "../config/index.js";
-import { BCRYPT_SALT_ROUNDS } from "../config/constant.js";
+import crypto from "node:crypto";
+import {
+  BCRYPT_SALT_ROUNDS,
+  REFRESH_TOKEN_EXPIRES_IN,
+} from "../config/constant.js";
 
 export function generateRefreshToken() {
   const tokenId = crypto.randomBytes(16).toString("hex");
@@ -20,7 +22,5 @@ export async function hashRefreshToken(token) {
 }
 
 export function getRefreshTokenExpiration() {
-  return new Date(
-    Date.now() + config.refreshTokenExpiresInDays * 24 * 60 * 60 * 1000,
-  );
+  return new Date(Date.now() + REFRESH_TOKEN_EXPIRES_IN);
 }
