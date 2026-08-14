@@ -7,6 +7,8 @@ import {
   getUserParamsSchema,
   getUsersQuerySchema,
 } from "./user.schema.js";
+import { authorize } from "../../middlewares/authorize.middleware.js";
+import { PERMISSIONS } from "../../config/permissions.js";
 
 const userRouter = express.Router();
 
@@ -26,6 +28,10 @@ userRouter.post(
   asyncHandler(userController.createUser),
 );
 userRouter.patch("/:id", asyncHandler(userController.updateUser));
-userRouter.delete("/:id", asyncHandler(userController.deleteUser));
+userRouter.delete(
+  "/:id",
+  authorize(PERMISSIONS.USER_DELETE),
+  asyncHandler(userController.deleteUser),
+);
 
 export default userRouter;

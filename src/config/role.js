@@ -1,7 +1,12 @@
 import { PERMISSIONS } from "./permissions.js";
 
+export const ROLE = {
+  ADMIN: "admin",
+  USER: "user",
+};
+
 export const ROLE_PERMISSIONS = {
-  admin: [
+  [ROLE.ADMIN]: [
     PERMISSIONS.USER_READ,
     PERMISSIONS.USER_UPDATE,
 
@@ -11,5 +16,5 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.PRODUCT_DELETE,
   ],
 
-  user: [PERMISSIONS.USER_READ, PERMISSIONS.PRODUCT_READ],
+  [ROLE.USER]: [PERMISSIONS.USER_READ, PERMISSIONS.PRODUCT_READ],
 };

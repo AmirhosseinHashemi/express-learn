@@ -40,7 +40,10 @@ export const authService = {
 
     if (!isPasswordValid) throw new InvalidCredentialError();
 
-    const accessToken = generateAccessToken({ userId: user.id });
+    const accessToken = generateAccessToken({
+      userId: user.id,
+      role: user.role,
+    });
     const { refreshToken, tokenId } = generateRefreshToken();
     const refreshTokenHash = await hashRefreshToken(refreshToken);
     const expiresAt = getRefreshTokenExpiration();
@@ -112,7 +115,7 @@ export const authService = {
   },
 
   async logoutAll(userId) {
-    if (!userId) throw new UnauthorizedError()
+    if (!userId) throw new UnauthorizedError();
     await authRepository.revokeAllUserRefreshTokens(userId);
   },
 };

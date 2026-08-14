@@ -10,6 +10,7 @@ export default function authMiddleware(req, res, next) {
   const payload = verifyAccessToken(token);
   req.user = {
     id: payload.userId,
+    role: payload.role
   };
 
   next();
