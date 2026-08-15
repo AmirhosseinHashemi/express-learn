@@ -9,6 +9,7 @@ import {
 } from "./user.schema.js";
 import { authorize } from "../../middlewares/authorize.middleware.js";
 import { PERMISSIONS } from "../../config/permissions.js";
+import upload from "../../middlewares/upload.middleware.js";
 
 const userRouter = express.Router();
 
@@ -33,5 +34,11 @@ userRouter.delete(
   authorize(PERMISSIONS.USER_DELETE),
   asyncHandler(userController.deleteUser),
 );
+
+userRouter.post("/me/avatar", upload.single("avatar"), (req, res) => {
+  res.json({
+    message: "File uploaded successfully",
+  });
+});
 
 export default userRouter;
