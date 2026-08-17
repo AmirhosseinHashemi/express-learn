@@ -11,13 +11,15 @@ const app = express();
 app.use(
   cors({
     origin: FRONT_END_ROUTE,
-    credentials: true
+    credentials: true,
   }),
 );
 
 app.use(cookieParser());
 
 app.use(express.json());
+
+app.use("/uploads", express.static("uploads"));
 
 app.use("/api", router);
 
