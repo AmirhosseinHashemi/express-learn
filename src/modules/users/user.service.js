@@ -1,3 +1,5 @@
+import BadRequestError from "../../errors/BadRequestError.js";
+import localFileStorage from "../../storage/localFile.storage.js";
 import UserNotFoundError from "./errors/UserNotFoundError.js";
 import { userRepository } from "./users.repository.js";
 
@@ -29,5 +31,18 @@ export const userService = {
     const result = await userRepository.delete(id);
 
     if (result === 0) throw new UserNotFoundError(id);
+  },
+
+  async uploadAvatar(userId, file) {
+    if (!file) throw new BadRequestError("Avatar file is required", 400);
+
+    const user = await userRepository.getUserAvatar(userId);
+
+    const avatarPath = `avatars/${file.filename}`;
+    const result = await userRepository.updateUserAvatar(userId, avatarPath);
+
+    if (user?.avatarPath) localFileStorage.delete(user.avatarPath);
+
+    return result;
   },
 };

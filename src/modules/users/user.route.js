@@ -35,10 +35,10 @@ userRouter.delete(
   asyncHandler(userController.deleteUser),
 );
 
-userRouter.post("/me/avatar", upload.single("avatar"), (req, res) => {
-  res.json({
-    message: "File uploaded successfully",
-  });
-});
+userRouter.post(
+  "/me/avatar",
+  upload.single("avatar"),
+  asyncHandler(userController.uploadAvatar),
+);
 
 export default userRouter;

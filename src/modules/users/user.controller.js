@@ -49,4 +49,14 @@ export const userController = {
       message: `user with ${userId} deleted successfully.`,
     });
   },
+
+  async uploadAvatar(req, res) {
+    const userId = req.user.id;
+    const result = await userService.uploadAvatar(userId, req.file);
+
+    sendSuccessResponse(res, {
+      message: "avatar updated successfully",
+      data: result,
+    });
+  },
 };

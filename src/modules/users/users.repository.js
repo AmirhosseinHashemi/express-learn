@@ -72,4 +72,27 @@ export const userRepository = {
       prisma.user.delete({ where: { id: Number(id) } }),
     );
   },
+
+  async getUserAvatar(id) {
+    return execute(() =>
+      prisma.user.findUnique({ where: { id }, select: { avatarPath: true } }),
+    );
+  },
+
+  async updateUserAvatar(id, avatarPath) {
+    return execute(() =>
+      prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
+          avatarPath,
+        },
+        select: {
+          id: true,
+          avatarPath: true,
+        },
+      }),
+    );
+  },
 };
