@@ -37,7 +37,9 @@ export const userService = {
   },
 
   async uploadAvatar(userId, file) {
-    if (!file) throw new BadRequestError("Avatar file is required", 400);
+    if (!file) {
+      throw new BadRequestError("Avatar file is required", 400);
+    }
 
     const user = await userRepository.getUserAvatar(userId);
 
@@ -46,14 +48,24 @@ export const userService = {
 
     const inputPath = file.path;
     const outputPath = localFileStorage.getPath(avatarPath);
-    await imageProcessor.processAvatar(inputPath, outputPath);
 
-    
-    const result = await userRepository.updateUserAvatar(userId, avatarPath);
-    
-    await localFileStorage.delete(`tmp/${file.filename}`);
-    if (user?.avatarPath) localFileStorage.delete(user.avatarPath);
+    try {
+      await imageProcessor.validate(inputPath);
+      await imageProcessor.processAvatar(inputPath, outputPath);
 
-    return result;
+      const result = await userRepository.updateUserAvatar(userId, avatarPath);
+
+      await localFileStorage.delete(`tmp/${file.filename}`);
+      if (user?.avatarPath) {
+        await localFileStorage.delete(user.avatarPath);
+      }
+
+      return result;
+    } catch (err) {
+      await localFileStorage.delete(`tmp/${file.filename}`);
+      await localFileStorage.delete(avatarPath);
+
+      throw err;
+    }
   },
 };
