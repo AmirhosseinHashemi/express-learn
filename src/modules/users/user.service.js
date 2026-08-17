@@ -1,7 +1,10 @@
+import path from "node:path";
+import crypto from "node:crypto";
 import BadRequestError from "../../errors/BadRequestError.js";
 import localFileStorage from "../../storage/localFile.storage.js";
 import UserNotFoundError from "./errors/UserNotFoundError.js";
 import { userRepository } from "./users.repository.js";
+import imageProcessor from "../../lib/imageProcessor.js";
 
 export const userService = {
   async getAllUser({ search, orderBy, page, limit }) {
@@ -38,9 +41,17 @@ export const userService = {
 
     const user = await userRepository.getUserAvatar(userId);
 
-    const avatarPath = `avatars/${file.filename}`;
-    const result = await userRepository.updateUserAvatar(userId, avatarPath);
+    const filename = `${crypto.randomUUID()}.webp`;
+    const avatarPath = `avatars/${filename}`;
 
+    const inputPath = file.path;
+    const outputPath = localFileStorage.getPath(avatarPath);
+    await imageProcessor.processAvatar(inputPath, outputPath);
+
+    
+    const result = await userRepository.updateUserAvatar(userId, avatarPath);
+    
+    await localFileStorage.delete(`tmp/${file.filename}`);
     if (user?.avatarPath) localFileStorage.delete(user.avatarPath);
 
     return result;
