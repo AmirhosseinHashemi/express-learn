@@ -25,7 +25,7 @@ userRouter.get(
 );
 userRouter.post(
   "/",
-  validate({ bodySchema: createUserSchema }),
+  validate({ body: createUserSchema }),
   asyncHandler(userController.createUser),
 );
 userRouter.patch("/:id", asyncHandler(userController.updateUser));
