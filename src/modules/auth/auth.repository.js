@@ -47,4 +47,16 @@ export const authRepository = {
       }),
     );
   },
+
+  async createEmailVerificationToken(data) {
+    return execute(() =>
+      prisma.emailVerificationToken.create({
+        data: {
+          tokenHash: data.tokenHash,
+          userId: data.userId,
+          expiresAt: data.expiresAt,
+        },
+      }),
+    );
+  },
 };

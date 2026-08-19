@@ -1,5 +1,12 @@
 import bcrypt from "bcrypt";
 import { BCRYPT_SALT_ROUNDS } from "../../config/constant.js";
+import emailService from "../../email/email.service.js";
+import {
+  generateEmailVerificationToken,
+  getEmailVerificationExpiration,
+  hashEmailVerificationToken,
+} from "../../email/email.token.js";
+import { verificationTemplate } from "../../email/templates/verifications.template..js";
 import AppError from "../../errors/AppError.js";
 import UnauthorizedError from "../../errors/UnauthorizedError.js";
 import { generateAccessToken } from "../../lib/jwt.js";
@@ -23,9 +30,35 @@ export const authService = {
         errorCode: "DATABASE_DUPLICATE_ERROR",
       });
 
+    const emailToken = generateEmailVerificationToken();
+    const hashedEmailToken = hashEmailVerificationToken(emailToken);
+    const emailTokenExpiration = getEmailVerificationExpiration();
+
     const hashedPass = await bcrypt.hash(userData.password, BCRYPT_SALT_ROUNDS);
     const userToCreate = { ...userData, password: hashedPass };
-    return await userRepository.create(userToCreate);
+
+    const user = await userRepository.create(userToCreate);
+
+    const newEmailTokenData = {
+      tokenHash: hashedEmailToken,
+      userId: user.id,
+      expiresAt: emailTokenExpiration,
+    };
+    await authRepository.createEmailVerificationToken(newEmailTokenData);
+
+    const verificationUrl = `http://localhost:3000/api/auth/verify-email?token=${emailToken}`;
+    const er = await emailService.send({
+      to: user.email,
+      subject: "Verify your email",
+
+      text: `Verify your email: ${verificationUrl}`,
+      html: verificationTemplate({
+        name: user.name,
+        verificationUrl,
+      }),
+    });
+
+    return user;
   },
 
   async loginUser(loginData) {
