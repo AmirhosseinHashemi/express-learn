@@ -59,4 +59,32 @@ export const authRepository = {
       }),
     );
   },
+
+  async findEmailVerificationToken(tokenHash) {
+    return execute(() =>
+      prisma.emailVerificationToken.findUnique({ where: { tokenHash } }),
+    );
+  },
+
+  async updateUserAsVerified(userId, tokenHash) {
+    return execute(() =>
+      prisma.$transaction([
+        prisma.emailVerificationToken.update({
+          where: {
+            tokenHash,
+          },
+          data: {
+            usedAt: new Date(),
+          },
+        }),
+
+        prisma.user.update({
+          where: { id: userId },
+          data: {
+            emailVerifiedAt: new Date(),
+          },
+        }),
+      ]),
+    );
+  },
 };

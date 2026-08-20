@@ -7,6 +7,7 @@ import {
   loginUserSchema,
   refreshSchema,
   registerUserSchema,
+  validateTokenSchema,
 } from "./auth.schema.js";
 
 const authRouter = express.Router();
@@ -33,6 +34,16 @@ authRouter.post(
 
 authRouter.post("/logout", asyncHandler(authController.logout));
 
-authRouter.post("/logout-all", authMiddleware, asyncHandler(authController.logoutAll));
+authRouter.post(
+  "/logout-all",
+  authMiddleware,
+  asyncHandler(authController.logoutAll),
+);
+
+authRouter.get(
+  "/verify-email",
+  validate({ query: validateTokenSchema }),
+  asyncHandler(authController.verifyToken),
+);
 
 export default authRouter;

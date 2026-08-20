@@ -151,4 +151,33 @@ export const authService = {
     if (!userId) throw new UnauthorizedError();
     await authRepository.revokeAllUserRefreshTokens(userId);
   },
+
+  async verifyToken(token) {
+    const hashedToken = hashEmailVerificationToken(token);
+    const storedToken =
+      await authRepository.findEmailVerificationToken(hashedToken);
+
+    if (!storedToken)
+      throw new AppError({
+        message: "Invalid verification token",
+        errorCode: "INVALID_TOKEN",
+        statusCode: 422,
+      });
+
+    if (storedToken.expiresAt < new Date())
+      throw new AppError({
+        message: "Verification token expired",
+        errorCode: "EXPIRED_TOKEN",
+        statusCode: 422,
+      });
+
+    if (storedToken.usedAt)
+      throw new AppError({
+        message: "Verification token already used",
+        errorCode: "USED_TOKEN",
+        statusCode: 422,
+      });
+
+    await authRepository.updateUserAsVerified(storedToken.userId, hashedToken);
+  },
 };

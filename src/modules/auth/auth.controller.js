@@ -61,4 +61,11 @@ export const authController = {
       message: "Logged out from all sessions successfully",
     });
   },
+
+  async verifyToken(req, res) {
+    const { token } = req.query;
+    await authService.verifyToken(token);
+
+    sendSuccessResponse(res, { message: "Email verified successfully" });
+  },
 };
