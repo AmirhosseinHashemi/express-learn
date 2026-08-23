@@ -23,6 +23,7 @@ model User {
 
   emailVerificationTokens  EmailVerificationToken[]
   refreshTokens RefreshToken[]
+  passwordResetTokens PasswordResetToken[]
 }
 
 enum UserRole {
@@ -45,6 +46,20 @@ model RefreshToken {
 }
 
 model EmailVerificationToken {
+  id        Int      @id @default(autoincrement())
+  tokenHash String   @unique
+  userId    Int
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  usedAt    DateTime?
+  revokedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model PasswordResetToken {
   id        Int      @id @default(autoincrement())
   tokenHash String   @unique
   userId    Int
