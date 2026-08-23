@@ -1,0 +1,9 @@
+// prisam
+
+- npx prisma studio --url='postgresql://postgres:password@localhost:5433/express_learn' 
+
+// docker 
+
+- docker compose up -d
+- docker exec -it express-learn-container sh
+- docker compose logs -f api

@@ -7,6 +7,7 @@ import {
   loginUserSchema,
   refreshSchema,
   registerUserSchema,
+  resendVerificationSchema,
   validateTokenSchema,
 } from "./auth.schema.js";
 
@@ -44,6 +45,12 @@ authRouter.get(
   "/verify-email",
   validate({ query: validateTokenSchema }),
   asyncHandler(authController.verifyToken),
+);
+
+authRouter.post(
+  "/resend-verification",
+  validate({ body: resendVerificationSchema }),
+  asyncHandler(authController.resenVerification),
 );
 
 export default authRouter;

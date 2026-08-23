@@ -68,4 +68,13 @@ export const authController = {
 
     sendSuccessResponse(res, { message: "Email verified successfully" });
   },
+
+  async resenVerification(req, res) {
+    const { email } = req.body;
+    await authService.resendVerification(email);
+
+    sendSuccessResponse(res, {
+      message: "If the email exists, a vrification email has been sent",
+    });
+  },
 };

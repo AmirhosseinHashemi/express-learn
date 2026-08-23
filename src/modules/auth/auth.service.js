@@ -180,4 +180,34 @@ export const authService = {
 
     await authRepository.updateUserAsVerified(storedToken.userId, hashedToken);
   },
+
+  async resendVerification(email) {
+    const user = await userRepository.findByEmail(email);
+    if (!user) return;
+
+    if (user.emailVerifiedAt) return;
+
+    const newToken = generateEmailVerificationToken();
+    const hashedToken = hashEmailVerificationToken(newToken);
+
+    const newEmailTokenData = {
+      tokenHash: hashedToken,
+      userId: user.id,
+      expiresAt: getEmailVerificationExpiration(),
+    };
+
+    await authRepository.rotateEmailVerificationToken(newEmailTokenData);
+
+    const verificationUrl = `http://localhost:3000/api/auth/verify-email?token=${newToken}`;
+    await emailService.send({
+      to: user.email,
+      subject: "Verify your email",
+
+      text: `Verify your email: ${verificationUrl}`,
+      html: verificationTemplate({
+        name: user.name,
+        verificationUrl,
+      }),
+    });
+  },
 };

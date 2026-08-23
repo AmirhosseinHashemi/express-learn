@@ -87,4 +87,28 @@ export const authRepository = {
       ]),
     );
   },
+
+  async rotateEmailVerificationToken(tokenData) {
+    return execute(() =>
+      prisma.$transaction([
+        prisma.emailVerificationToken.updateMany({
+          where: {
+            userId: tokenData.userId,
+            revokedAt: null,
+            usedAt: null,
+          },
+          data: {
+            revokedAt: new Date(),
+          },
+        }),
+        prisma.emailVerificationToken.create({
+          data: {
+            tokenHash: tokenData.tokenHash,
+            userId: tokenData.userId,
+            expiresAt: tokenData.expiresAt,
+          },
+        }),
+      ]),
+    );
+  },
 };
