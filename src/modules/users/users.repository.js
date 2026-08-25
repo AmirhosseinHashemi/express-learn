@@ -95,4 +95,17 @@ export const userRepository = {
       }),
     );
   },
+
+  async updateUserPassword(id, newPassword) {
+    return execute(() =>
+      prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
+          password: newPassword,
+        },
+      }),
+    );
+  },
 };

@@ -18,6 +18,12 @@ import {
 import { userRepository } from "../users/users.repository.js";
 import { authRepository } from "./auth.repository.js";
 import InvalidCredentialError from "./errors/InvalidCredentialError.js";
+import {
+  generateResetPasswordToken,
+  getResetPasswordExpiration,
+  hashResetPasswordToken,
+} from "../../utils/passwordToken.js";
+import { forgotPasswordTemplate } from "../../email/templates/forgotPassword.template.js";
 
 export const authService = {
   async registerUser(userData) {
@@ -209,5 +215,99 @@ export const authService = {
         verificationUrl,
       }),
     });
+  },
+
+  async forgotPassword(email) {
+    if (!email) return;
+
+    const user = await userRepository.findByEmail(email);
+    if (!user || !user.emailVerifiedAt) return;
+
+    const newToken = generateResetPasswordToken();
+    const hashedToken = hashResetPasswordToken(newToken);
+    const expiresAt = getResetPasswordExpiration();
+
+    const newtokenData = {
+      userId: user.id,
+      tokenHash: hashedToken,
+      expiresAt,
+    };
+    await authRepository.rotateResetPasswordTokens(newtokenData);
+
+    const verificationUrl = `http://localhost:3000/api/auth/reset-password?token=${newToken}`;
+    await emailService.send({
+      to: user.email,
+      subject: "Reset password",
+
+      text: `Reset your password: ${verificationUrl}`,
+      html: forgotPasswordTemplate({
+        name: user.name,
+        verificationUrl,
+      }),
+    });
+  },
+
+  async validateResetPassword(token) {
+    if (!token) throw new UnauthorizedError();
+
+    const hashedToken = hashResetPasswordToken(token);
+    const storedToken =
+      await authRepository.findResetPasswordToken(hashedToken);
+
+    if (!storedToken)
+      throw new AppError({
+        message: "Invalid reset token",
+        errorCode: "INVALID_TOKEN",
+        statusCode: 422,
+      });
+
+    if (storedToken.expiresAt < new Date())
+      throw new AppError({
+        message: "Reset token expired",
+        errorCode: "EXPIRED_TOKEN",
+        statusCode: 422,
+      });
+
+    if (storedToken.usedAt || storedToken.revokedAt)
+      throw new AppError({
+        message: "Reset token already used",
+        errorCode: "USED_TOKEN",
+        statusCode: 422,
+      });
+  },
+
+  async resetPassword(token, newPassword) {
+    const hashedToken = hashResetPasswordToken(token);
+    const storedToken =
+      await authRepository.findResetPasswordToken(hashedToken);
+
+    if (!storedToken)
+      throw new AppError({
+        message: "Invalid reset token",
+        errorCode: "INVALID_TOKEN",
+        statusCode: 422,
+      });
+
+    if (storedToken.expiresAt < new Date())
+      throw new AppError({
+        message: "Reset token expired",
+        errorCode: "EXPIRED_TOKEN",
+        statusCode: 422,
+      });
+
+    if (storedToken.usedAt || storedToken.revokedAt)
+      throw new AppError({
+        message: "Reset token already used",
+        errorCode: "USED_TOKEN",
+        statusCode: 422,
+      });
+
+    const hashedNewPass = await bcrypt.hash(newPassword, BCRYPT_SALT_ROUNDS);
+
+    await authRepository.resetUserPassword(
+      storedToken.userId,
+      hashedNewPass,
+      hashedToken,
+    );
   },
 };

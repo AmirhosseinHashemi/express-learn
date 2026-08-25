@@ -22,3 +22,20 @@ export const validateTokenSchema = z.object({
 export const resendVerificationSchema = z.object({
   email: z.string().trim().email(),
 });
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().trim().email(),
+});
+
+export const resetPasswordSchema = z
+  .object({
+    token: z.string(),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z
+      .string()
+      .min(8, "Confirm password must be at least 8 characters"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    error: "Passwords do not match",
+    path: ["confirmPassword"],
+  });

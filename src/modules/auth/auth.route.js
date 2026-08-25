@@ -4,10 +4,12 @@ import asyncHandler from "../../utils/asyncHandler.js";
 import validate from "../../utils/validate.js";
 import { authController } from "./auth.controller.js";
 import {
+  forgotPasswordSchema,
   loginUserSchema,
   refreshSchema,
   registerUserSchema,
   resendVerificationSchema,
+  resetPasswordSchema,
   validateTokenSchema,
 } from "./auth.schema.js";
 
@@ -51,6 +53,23 @@ authRouter.post(
   "/resend-verification",
   validate({ body: resendVerificationSchema }),
   asyncHandler(authController.resenVerification),
+);
+
+authRouter.post(
+  "/forgot-password",
+  validate({ body: forgotPasswordSchema }),
+  asyncHandler(authController.forgotPassword),
+);
+
+authRouter.get(
+  "/reset-password",
+  asyncHandler(authController.validateResetPassword),
+);
+
+authRouter.post(
+  "/reset-password",
+  validate({ body: resetPasswordSchema }),
+  asyncHandler(authController.resetPassword),
 );
 
 export default authRouter;

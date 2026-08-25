@@ -77,4 +77,27 @@ export const authController = {
       message: "If the email exists, a vrification email has been sent",
     });
   },
+
+  async forgotPassword(req, res) {
+    const { email } = req.body;
+    await authService.forgotPassword(email);
+
+    sendSuccessResponse(res, {
+      message: "If the email exists, a reset link has been sent",
+    });
+  },
+
+  async validateResetPassword(req, res) {
+    const { token } = req.query;
+    await authService.validateResetPassword(token);
+
+    res.redirect(`/reset-password?token=${token}`);
+  },
+
+  async resetPassword(req, res) {
+    const { token, password } = req.body;
+    await authService.resetPassword(token, password);
+
+    sendSuccessResponse(res, { message: "Password changed successfully" });
+  },
 };
