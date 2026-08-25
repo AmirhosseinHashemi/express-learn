@@ -8,3 +8,6 @@ export const REFRESH_TOKEN_EXPIRES_IN =
 export const ALLOWED_IMAGE_FORMATS = new Set(["jpeg", "png", "webp"]);
 export const MAX_IMAGE_WIDTH = 5000;
 export const MAX_IMAGE_HEIGHT = 5000;
+
+
+export const RESET_PASSWORD_TOKEN_EXPIRES_IN = 10 * 60 * 1000 // 10 min
