@@ -3,10 +3,11 @@ import { userService } from "./user.service.js";
 
 export const userController = {
   async getAllUser(req, res) {
-    const { search, orderBy, page, limit } = req.query;
+    const { name, email, search, orderBy, page, limit } = req.query;
 
-    
     const users = await userService.getAllUser({
+      name,
+      email,
       search,
       orderBy,
       page,

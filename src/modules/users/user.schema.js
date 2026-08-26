@@ -7,6 +7,9 @@ import {
 } from "./user.constants.js";
 
 export const getUsersQuerySchema = z.object({
+  name: z.string().trim().optional(),
+  email: z.string().trim().optional(),
+  
   search: z.string().trim().optional(),
 
   page: z.coerce.number().int().min(1).default(1),
@@ -18,7 +21,7 @@ export const getUsersQuerySchema = z.object({
     .max(USER_MAX_PAGE_SIZE)
     .default(USER_DEFAULT_PAGE_SIZE),
 
-  sort: z
+  orderBy: z
     .enum(USER_SORT_ENUM)
     .default(DEAFULT_USERS_SORT_COLUMN)
     .transform((sort) => {

@@ -2,8 +2,13 @@ import { execute, prisma } from "../../database/prisma.js";
 import { USER_SEARCH_FIELDS } from "./user.constants.js";
 
 export const userRepository = {
-  async findAll({ search, orderBy, skip, limit }) {
+  async findAll({ name, email, search, orderBy, skip, limit }) {
     const where = {};
+
+    if (name && name !== undefined)
+      where.name = { contains: name, mode: "insensitive" };
+    if (email && email !== undefined)
+      where.email = { contains: email, mode: "insensitive" };
 
     if (search) {
       where.OR = USER_SEARCH_FIELDS.map((field) => ({
@@ -13,6 +18,9 @@ export const userRepository = {
         },
       }));
     }
+
+    console.log(orderBy);
+    
 
     return execute(() =>
       prisma.$transaction([
