@@ -5,10 +5,26 @@ import localFileStorage from "../../storage/localFile.storage.js";
 import UserNotFoundError from "./errors/UserNotFoundError.js";
 import { userRepository } from "./users.repository.js";
 import imageProcessor from "../../lib/imageProcessor.js";
+import { getPagination, getPaginationMeta } from "../../utils/pagination.js";
 
 export const userService = {
   async getAllUser({ search, orderBy, page, limit }) {
-    return userRepository.findAll({ search, orderBy, page, limit });
+    const { skip } = getPagination(page, limit);
+    const [users, totalUsers] = await userRepository.findAll({
+      search,
+      orderBy,
+      skip,
+      limit,
+    });
+
+    
+    const pagination = getPaginationMeta({
+      page,
+      limit,
+      totalItems: totalUsers,
+    });
+
+    return { users, pagination };
   },
 
   async getUserById(id) {

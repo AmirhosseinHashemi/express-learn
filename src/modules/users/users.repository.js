@@ -1,10 +1,9 @@
 import { execute, prisma } from "../../database/prisma.js";
-import { USER_SEARCH_FIELDS, USER_SORT_FIELDS } from "./user.constants.js";
+import { USER_SEARCH_FIELDS } from "./user.constants.js";
 
 export const userRepository = {
-  async findAll({ search, orderBy, page, limit }) {
+  async findAll({ search, orderBy, skip, limit }) {
     const where = {};
-    const skip = (page - 1) * limit;
 
     if (search) {
       where.OR = USER_SEARCH_FIELDS.map((field) => ({
@@ -15,7 +14,7 @@ export const userRepository = {
       }));
     }
 
-    const [items, count] = await execute(() =>
+    return execute(() =>
       prisma.$transaction([
         prisma.user.findMany({
           where,
@@ -29,11 +28,6 @@ export const userRepository = {
         }),
       ]),
     );
-
-    return {
-      items,
-      total: count,
-    };
   },
 
   async findById(id) {

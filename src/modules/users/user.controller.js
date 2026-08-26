@@ -5,6 +5,7 @@ export const userController = {
   async getAllUser(req, res) {
     const { search, orderBy, page, limit } = req.query;
 
+    
     const users = await userService.getAllUser({
       search,
       orderBy,
